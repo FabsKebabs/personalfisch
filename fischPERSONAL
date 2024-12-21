@@ -204,17 +204,18 @@ local teleportSpots = {
     Volcano = CFrame.new(-1888.52319, 163.847565, 329.238281, 1, 0, 0, 0, 1, 0, 0, 0, 1),
     Wilson = CFrame.new(2938.80591, 277.474762, 2567.13379, 0.4648332, 0, 0.885398269, 0, 1, 0, -0.885398269, 0, 0.4648332),
     Wilsons_Rod = CFrame.new(2879.2085, 135.07663, 2723.64233, 0.970463336, -0.168695927, -0.172460333, 0.141582936, -0.180552125, 0.973321974, -0.195333466, -0.968990743, -0.151334763);
-    The_Depths = CFrame.new(884, -715, 1291);
-    The_Depths_Rod = CFrame.new(1705, -894, 1434);
-    Ancient_Isle = CFrame.new(5525, 146, 582);
-    Ancient_Waterfall = CFrame.new(5822, 155, 329);
-    Ancient_Archives = CFrame.new(-3155, -742, 1684);
-    Forsaken_Isle = CFrame.new(-2478, 136, 1568)
-    Northern_Expedition = CFrame.new(19530, 140, 5265)
-    North_Cave = CFrame.new(19988, 915, 5437)
-   North_Vault = CFrame.new(20005, 1142, 5575)
-   Top_North_Camp = CFrame.new(20025, -463, 7099)
-   Sundial_Totem = CFrame.new(-1147, 139, -1063)
+    The_Depths = CFrame.new(884, -715, 1291),
+    The_Depths_Rod = CFrame.new(1705, -894, 1434),
+    Ancient_Isle = CFrame.new(5525, 146, 582),
+    Ancient_Waterfall = CFrame.new(5822, 155, 329),
+    Ancient_Archives = CFrame.new(-3155, -742, 1684),
+    Forsaken_Isle = CFrame.new(-2478, 136, 1568),
+    Northern_Expedition = CFrame.new(19530, 140, 5265),
+    North_Cave = CFrame.new(19988, 915, 5437),
+   North_Vault = CFrame.new(20005, 1142, 5575),
+   Top_North_Camp = CFrame.new(20025, -463, 7099),
+   Sundial_Totem = CFrame.new(-1147, 139, -1063),
+  Aurora_Totem = CFrame.new(-1808, -135, -3286)
 
 
 
@@ -229,7 +230,7 @@ end
 
 Tab2:AddDropdown({
     Name = "Teleport Locations",
-    Options = {"Altar", "Arch", "Birch", "Brine", "Deep", "Deepshop", "Executive", "Keepers", "Northern_Expedition", "North_Cave", "North_Vault", "Top_North_Camp", "Mod_House", "Moosewood", "Mushgrove", "Roslit", "Snow", "Sundial_Totem", "Snowcap", "Spike", "Statue", "Sunstone", "Swamp", "Terrapin", "Trident", "Vertigo", "The_Depths", "The_Depths_Rod", "Ancient_Isle", "Ancient_Waterfall", "Ancient_Archives", "Forsaken_Isle", "Volcano", "Wilson", "Wilsons_Rod"},
+    Options = {"Altar", "Arch", "Birch", "Brine", "Deep", "Deepshop", "Executive", "Keepers", "Aurora_Totem", "Northern_Expedition", "North_Cave", "North_Vault", "Top_North_Camp", "Mod_House", "Moosewood", "Mushgrove", "Roslit", "Snow", "Sundial_Totem", "Snowcap", "Spike", "Statue", "Sunstone", "Swamp", "Terrapin", "Trident", "Vertigo", "The_Depths", "The_Depths_Rod", "Ancient_Isle", "Ancient_Waterfall", "Ancient_Archives", "Forsaken_Isle", "Volcano", "Wilson", "Wilsons_Rod"},
     Callback = function(selectedLocation)
         teleportTo(selectedLocation)  
     end
@@ -326,7 +327,7 @@ local itemSpots = {
     Crab_Cage = CFrame.new(474.803589, 149.664566, 229.49469, -0.721874595, 0, 0.692023814, 0, 1, 0, -0.692023814, 0, -0.721874595),
     GPS = CFrame.new(517.896729, 149.217636, 284.856842, 7.39097595e-06, -0.719539165, -0.694451928, -1, -7.39097595e-06, -3.01003456e-06, -3.01003456e-06, 0.694451928, -0.719539165),
     Basic_Diving_Gear = CFrame.new(369.174774, 132.508835, 248.705368, 0.228398502, -0.158300221, -0.96061182, 1.58026814e-05, 0.986692965, -0.162594408, 0.973567724, 0.037121132, 0.225361705),
-    Fish_Radar = CFrame.new(365.75177, 134.50499, 274.105804, 0.704499543, -0.111681774, -0.70086211, 1.32396817e-05, 0.987542748, -0.157350808, 0.709704578, 0.110844307, 0.695724905)
+    Fish_Radar = CFrame.new(365.75177, 134.50499, 274.105804, 0.704499543, -0.111681774, -0.70086211, 1.32396817e-05, 0.987542748, -0.157350808, 0.709704578, 0.110844307, 0.695724905),
    Heavens_Rod = CFrame.new(20025, -463, 7099)
 
 }
