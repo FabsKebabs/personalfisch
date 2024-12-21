@@ -159,13 +159,12 @@ Tab1:AddToggle({
 -- Add a slider for custom Auto Cast Delay
 Tab1:AddSlider({
     Name = "Auto Cast Delay (Seconds)",
-    Min = 1,
-    Max = 60,
+    Min = 6,
+    Max = 17,
     Default = AutoCastDelay,
     Increment = 1,
     Callback = function(Value)
         AutoCastDelay = Value
-        ShowNotification(`Auto Cast Delay set to {AutoCastDelay} seconds`)
     end
 })
 
