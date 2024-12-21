@@ -215,8 +215,9 @@ local teleportSpots = {
    North_Vault = CFrame.new(20005, 1142, 5575),
    Top_North_Camp = CFrame.new(20025, -463, 7099),
    Sundial_Totem = CFrame.new(-1147, 139, -1063),
-  Aurora_Totem = CFrame.new(-1808, -135, -3286)
-
+  Aurora_Totem = CFrame.new(-1808, -135, -3286),
+  Solar_Totem = CFrame.new(5963, 275, 852),
+Windset_Totem = CFrame.new(2841, 182, 2699)
 
 
 
@@ -230,7 +231,7 @@ end
 
 Tab2:AddDropdown({
     Name = "Teleport Locations",
-    Options = {"Altar", "Arch", "Birch", "Brine", "Deep", "Deepshop", "Executive", "Keepers", "Aurora_Totem", "Northern_Expedition", "North_Cave", "North_Vault", "Top_North_Camp", "Mod_House", "Moosewood", "Mushgrove", "Roslit", "Snow", "Sundial_Totem", "Snowcap", "Spike", "Statue", "Sunstone", "Swamp", "Terrapin", "Trident", "Vertigo", "The_Depths", "The_Depths_Rod", "Ancient_Isle", "Ancient_Waterfall", "Ancient_Archives", "Forsaken_Isle", "Volcano", "Wilson", "Wilsons_Rod"},
+    Options = {"Altar", "Arch", "Birch", "Brine", "Deep", "Deepshop", "Executive", "Keepers", "Aurora_Totem", "Northern_Expedition", "North_Cave", "North_Vault", "Top_North_Camp", "Mod_House", "Moosewood", "Mushgrove", "Roslit", "Snow", "Solar_Totem", "Windset_Totem", "Sundial_Totem", "Snowcap", "Spike", "Statue", "Sunstone", "Swamp", "Terrapin", "Trident", "Vertigo", "The_Depths", "The_Depths_Rod", "Ancient_Isle", "Ancient_Waterfall", "Ancient_Archives", "Forsaken_Isle", "Volcano", "Wilson", "Wilsons_Rod"},
     Callback = function(selectedLocation)
         teleportTo(selectedLocation)  
     end
