@@ -67,20 +67,21 @@ function ToggleAutoCast(Name, State, Input)
     end
 end
 
--- Auto Cast Logic: Hold mouse button for 1 second, wait 16 seconds, and loop
+local AutoCastDelay = 16 -- Default delay in seconds
+
+-- Auto Cast Logic: Hold mouse button, wait, and loop
 task.spawn(function()
     while true do
         if AutoCastEnabled then
             VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0) -- Hold mouse button
             task.wait(1) -- Hold duration
             VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0) -- Release mouse button
-            task.wait(6) -- Wait before next cast
+            task.wait(AutoCastDelay) -- Custom delay set by the user
         else
             task.wait(1) -- Avoid unnecessary CPU usage when disabled
         end
     end
 end)
-
 
 -- Handle the GUI when the rod is used and progress is tracked
 LocalPlayer.PlayerGui.DescendantAdded:Connect(function(Descendant)
@@ -139,19 +140,32 @@ end
 -- Add Controls in the Main Tab
 Tab1:AddToggle({
     Name = "Enable Auto Farm",
-    Default = Enabled,  -- Ensure it starts with the current state of Enabled
+    Default = Enabled,
     Callback = function(State)
-        Enabled = State  -- Update the state based on the toggle's value
+        Enabled = State
         ShowNotification(`Status: {Enabled}`)
     end
 })
 
 Tab1:AddToggle({
     Name = "Enable Auto Cast",
-    Default = AutoCastEnabled,  -- Ensure it starts with the current state of AutoCastEnabled
+    Default = AutoCastEnabled,
     Callback = function(State)
-        AutoCastEnabled = State  -- Update the state based on the toggle's value
+        AutoCastEnabled = State
         ShowNotification(`Auto Cast: {AutoCastEnabled}`)
+    end
+})
+
+-- Add a slider for custom Auto Cast Delay
+Tab1:AddSlider({
+    Name = "Auto Cast Delay (Seconds)",
+    Min = 1,
+    Max = 60,
+    Default = AutoCastDelay,
+    Increment = 1,
+    Callback = function(Value)
+        AutoCastDelay = Value
+        ShowNotification(`Auto Cast Delay set to {AutoCastDelay} seconds`)
     end
 })
 
@@ -349,6 +363,7 @@ Tab2:AddDropdown({
 })
 
 
+
 local Tab3 = Window:MakeTab({
     Name = "Misc",
     PremiumOnly = false
@@ -423,5 +438,3 @@ Tab3:AddToggle({
         end
     end
 })
-
-
