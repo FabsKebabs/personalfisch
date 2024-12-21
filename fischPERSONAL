@@ -214,6 +214,9 @@ local teleportSpots = {
     North_Cave = CFrame.new(19988, 915, 5437)
    North_Vault = CFrame.new(20005, 1142, 5575)
    Top_North_Camp = CFrame.new(20025, -463, 7099)
+   Sundial_Totem = CFrame.new(-1147, 139, -1063)
+
+
 
 
 
