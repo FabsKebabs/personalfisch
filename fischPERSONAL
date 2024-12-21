@@ -210,6 +210,11 @@ local teleportSpots = {
     Ancient_Waterfall = CFrame.new(5822, 155, 329);
     Ancient_Archives = CFrame.new(-3155, -742, 1684);
     Forsaken_Isle = CFrame.new(-2478, 136, 1568)
+    Northern_Expedition = CFrame.new(19530, 140, 5265)
+    North_Cave = CFrame.new(19988, 915, 5437)
+   North_Vault = CFrame.new(20005, 1142, 5575)
+   Top_North_Camp = CFrame.new(20025, -463, 7099)
+
 
 
 }
@@ -221,7 +226,7 @@ end
 
 Tab2:AddDropdown({
     Name = "Teleport Locations",
-    Options = {"Altar", "Arch", "Birch", "Brine", "Deep", "Deepshop", "Executive", "Keepers", "Mod_House", "Moosewood", "Mushgrove", "Roslit", "Snow", "Snowcap", "Spike", "Statue", "Sunstone", "Swamp", "Terrapin", "Trident", "Vertigo", "The_Depths", "The_Depths_Rod", "Ancient_Isle", "Ancient_Waterfall", "Ancient_Archives", "Forsaken_Isle", "Volcano", "Wilson", "Wilsons_Rod"},
+    Options = {"Altar", "Arch", "Birch", "Brine", "Deep", "Deepshop", "Executive", "Keepers", "Northern_Expedition", "North_Cave", "North_Vault", "Top_North_Camp", "Mod_House", "Moosewood", "Mushgrove", "Roslit", "Snow", "Snowcap", "Spike", "Statue", "Sunstone", "Swamp", "Terrapin", "Trident", "Vertigo", "The_Depths", "The_Depths_Rod", "Ancient_Isle", "Ancient_Waterfall", "Ancient_Archives", "Forsaken_Isle", "Volcano", "Wilson", "Wilsons_Rod"},
     Callback = function(selectedLocation)
         teleportTo(selectedLocation)  
     end
@@ -319,6 +324,8 @@ local itemSpots = {
     GPS = CFrame.new(517.896729, 149.217636, 284.856842, 7.39097595e-06, -0.719539165, -0.694451928, -1, -7.39097595e-06, -3.01003456e-06, -3.01003456e-06, 0.694451928, -0.719539165),
     Basic_Diving_Gear = CFrame.new(369.174774, 132.508835, 248.705368, 0.228398502, -0.158300221, -0.96061182, 1.58026814e-05, 0.986692965, -0.162594408, 0.973567724, 0.037121132, 0.225361705),
     Fish_Radar = CFrame.new(365.75177, 134.50499, 274.105804, 0.704499543, -0.111681774, -0.70086211, 1.32396817e-05, 0.987542748, -0.157350808, 0.709704578, 0.110844307, 0.695724905)
+   Heavens_Rod = CFrame.new(20025, -463, 7099)
+
 }
 
 
@@ -329,7 +336,7 @@ end
 
 Tab2:AddDropdown({
     Name = "Item Spots",
-    Options = {"Training_Rod", "Plastic_Rod", "Lucky_Rod", "Kings_Rod", "Flimsy_Rod" , "Nocturnal_Rod", "Fast_Rod", "Carbon_Rod", "Long_Rod", "Mythical_Rod" , "Midas_Rod" , 
+    Options = {"Training_Rod", "Plastic_Rod", "Lucky_Rod", "Kings_Rod", "Flimsy_Rod" , "Nocturnal_Rod", "Fast_Rod", "Carbon_Rod", "Heavens_Rod", "Long_Rod", "Mythical_Rod" , "Midas_Rod" , 
                "Trident_Rod", "Enchated_Altar", "Bait_Crate", "Quality_Bait_Crate", "Crab_Cage" , "GPS", "Basic_Diving_Gear", "Fish_Radar"},  -- List of teleport locations
     Callback = function(selectedLocation)
         teleportTo(selectedLocation)  -- Teleport the player to the selected spot
