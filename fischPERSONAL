@@ -1,0 +1,408 @@
+-- Initialize Orion Library
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/FabsKebabs/load/refs/heads/main/Source')))()
+
+-- Create a Window
+local Window = OrionLib:MakeWindow({
+    Name = [[<font color="rgb(0, 229, 255)">Publoader-FISCH AUTO FARM</font>]],
+    HidePremium = false,
+    SaveConfig = true,
+    ConfigFolder = "Subscribe To Pubzy"
+})
+
+-- Create Tabs
+local Tab1 = Window:MakeTab({Name = "Main", PremiumOnly = false})
+
+-- Variables and Services
+local Players = game:GetService('Players')
+local CoreGui = game:GetService('StarterGui')
+local GuiService = game:GetService('GuiService')
+local ReplicatedStorage = game:GetService('ReplicatedStorage')
+local ContextActionService = game:GetService('ContextActionService')
+local VirtualInputManager = game:GetService('VirtualInputManager')
+local UserInputService = game:GetService('UserInputService')
+
+local LocalPlayer = Players.LocalPlayer
+
+local Enabled = false
+local Rod = nil
+local Casted = false
+local Progress = false
+local Finished = false
+local LoopPosition = nil
+local Keybind = Enum.KeyCode.X
+local AutoCastEnabled = false
+
+-- Function to show notifications
+function ShowNotification(String)
+    CoreGui:SetCore('SendNotification', {
+        Title = 'Auto Farm',
+        Text = String,
+        Duration = 1
+    })
+end
+
+-- Toggle the auto farm on and off
+function ToggleFarm(Name, State, Input)
+    if State == Enum.UserInputState.Begin then
+        Enabled = not Enabled
+        if Enabled then
+            LoopPosition = LocalPlayer.Character.HumanoidRootPart.Position
+        else
+            Finished = false
+            Progress = false
+            GuiService.SelectedObject = nil
+            if Rod then
+                Rod.events.reset:FireServer()
+            end
+        end
+        ShowNotification(`Status: {Enabled}`)
+    end
+end
+
+-- Toggle Auto Cast
+function ToggleAutoCast(Name, State, Input)
+    if State == Enum.UserInputState.Begin then
+        AutoCastEnabled = not AutoCastEnabled
+        ShowNotification(`Auto Cast: {AutoCastEnabled}`)
+    end
+end
+
+-- Auto Cast Logic: Hold mouse button for 1 second, wait 16 seconds, and loop
+task.spawn(function()
+    while true do
+        if AutoCastEnabled then
+            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0) -- Hold mouse button
+            task.wait(1) -- Hold duration
+            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0) -- Release mouse button
+            task.wait(6) -- Wait before next cast
+        else
+            task.wait(1) -- Avoid unnecessary CPU usage when disabled
+        end
+    end
+end)
+
+
+-- Handle the GUI when the rod is used and progress is tracked
+LocalPlayer.PlayerGui.DescendantAdded:Connect(function(Descendant)
+    if Enabled then
+        if Descendant.Name == 'button' and Descendant.Parent.Name == 'safezone' then
+            task.wait(0.3)
+            GuiService.SelectedObject = Descendant
+            VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
+            VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
+            task.wait(0.1)
+            GuiService.SelectedObject = nil
+        elseif Descendant.Name == 'playerbar' and Descendant.Parent.Name == 'bar' then
+            Finished = true
+            Descendant:GetPropertyChangedSignal('Position'):Wait()
+            ReplicatedStorage.events.reelfinished:FireServer(100, true)
+        end
+    end
+end)
+
+-- Auto cast the rod periodically
+task.spawn(function()
+    while true do
+        if Enabled and AutoCastEnabled and not Progress then
+            if Rod then
+                Progress = true
+                task.wait(0.5)
+                Rod.events.reset:FireServer()
+                Rod.events.cast:FireServer(100.5)
+            end
+        end
+        task.wait()
+    end
+end)
+
+-- Keep the player at the initial position while auto farming
+task.spawn(function()
+    while true do
+        if Enabled and PositionLockEnabled then
+            LocalPlayer.Character.HumanoidRootPart.Position = LoopPosition
+        end
+        task.wait(0.75)
+    end
+end)
+
+-- Keybind Setup for Toggle
+if not UserInputService.KeyboardEnabled then
+    ContextActionService:BindAction('ToggleFarm', ToggleFarm, false, Keybind, Enum.UserInputType.Touch)
+    ContextActionService:SetTitle('ToggleFarm', 'Toggle Farm')
+    ContextActionService:SetPosition('ToggleFarm', UDim2.new(0.9, -50, 0.9, -150))
+    ShowNotification('Press the onscreen button to enable/disable')
+else
+    ContextActionService:BindAction('ToggleFarm', ToggleFarm, false, Keybind)
+    ShowNotification(`Press '{Keybind.Name}' to enable/disable`)
+end
+
+-- Add Controls in the Main Tab
+Tab1:AddToggle({
+    Name = "Enable Auto Farm",
+    Default = Enabled,  -- Ensure it starts with the current state of Enabled
+    Callback = function(State)
+        Enabled = State  -- Update the state based on the toggle's value
+        ShowNotification(`Status: {Enabled}`)
+    end
+})
+
+Tab1:AddToggle({
+    Name = "Enable Auto Cast",
+    Default = AutoCastEnabled,  -- Ensure it starts with the current state of AutoCastEnabled
+    Callback = function(State)
+        AutoCastEnabled = State  -- Update the state based on the toggle's value
+        ShowNotification(`Auto Cast: {AutoCastEnabled}`)
+    end
+})
+
+
+local AntiAFKConnection  -- Variable to store Anti-AFK connection
+
+
+
+-- Add Labels for user instructions
+Tab1:AddLabel("X To Turn on Auto Farm (This auto Shakes too)", Color3.fromRGB(127, 143, 166))
+Tab1:AddLabel("Once auto cast is enabled do not Click the screen", Color3.fromRGB(127, 143, 166))
+Tab1:AddLabel("Press T To close Gui", Color3.fromRGB(127, 143, 166))
+Tab1:AddLabel("Press Right Shift to Open Gui", Color3.fromRGB(127, 143, 166))
+
+
+
+
+
+
+
+-- TELEPORTS
+local Tab2 = Window:MakeTab({
+    Name = "Teleports",
+    PremiumOnly = false
+})
+
+
+local teleportSpots = {
+    Altar = CFrame.new(1296.320068359375, -808.5519409179688, -298.93817138671875),
+    Arch = CFrame.new(998.966796875, 126.6849365234375, -1237.1434326171875),
+    Birch = CFrame.new(1742.3203125, 138.25787353515625, -2502.23779296875),
+    Brine = CFrame.new(-1794.10596, -145.849701, -3302.92358, -5.16176224e-05, 3.10316682e-06, 0.99999994, 0.119907647, 0.992785037, 3.10316682e-06, -0.992785037, 0.119907647, -5.16176224e-05),
+    Deep = CFrame.new(-1510.88672, -237.695053, -2852.90674, 0.573604643, 0.000580655003, 0.81913209, -0.000340352941, 0.999999762, -0.000470530824, -0.819132209, -8.89541116e-06, 0.573604763),
+    Deepshop = CFrame.new(-979.196411, -247.910156, -2699.87207, 0.587748766, 0, 0.809043527, 0, 1, 0, -0.809043527, 0, 0.587748766),
+    Executive = CFrame.new(-29.836761474609375, -250.48486328125, 199.11614990234375),
+    Keepers = CFrame.new(1296.320068359375, -808.5519409179688, -298.93817138671875),
+    Mod_House = CFrame.new(-30.205902099609375, -249.40594482421875, 204.0529022216797),
+    Moosewood = CFrame.new(383.10113525390625, 131.2406005859375, 243.93385314941406),
+    Mushgrove = CFrame.new(2501.48583984375, 127.7583236694336, -720.699462890625),
+    Roslit = CFrame.new(-1476.511474609375, 130.16842651367188, 671.685302734375),
+    Snow = CFrame.new(2648.67578125, 139.06605529785156, 2521.29736328125),
+    Snowcap = CFrame.new(2648.67578125, 139.06605529785156, 2521.29736328125),
+    Spike = CFrame.new(-1254.800537109375, 133.88555908203125, 1554.2021484375),
+    Statue = CFrame.new(72.8836669921875, 138.6964874267578, -1028.4193115234375),
+    Sunstone = CFrame.new(-933.259705, 128.143951, -1119.52063, -0.342042685, 0, -0.939684391, 0, 1, 0, 0.939684391, 0, -0.342042685),
+    Swamp = CFrame.new(2501.48583984375, 127.7583236694336, -720.699462890625),
+    Terrapin = CFrame.new(-143.875244140625, 141.1676025390625, 1909.6070556640625),
+    Trident = CFrame.new(-1479.48987, -228.710632, -2391.39307, 0.0435845852, 0, 0.999049723, 0, 1, 0, -0.999049723, 0, 0.0435845852),
+    Vertigo = CFrame.new(-112.007278, -492.901093, 1040.32788, -1, 0, 0, 0, 1, 0, 0, 0, -1),
+    Volcano = CFrame.new(-1888.52319, 163.847565, 329.238281, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+    Wilson = CFrame.new(2938.80591, 277.474762, 2567.13379, 0.4648332, 0, 0.885398269, 0, 1, 0, -0.885398269, 0, 0.4648332),
+    Wilsons_Rod = CFrame.new(2879.2085, 135.07663, 2723.64233, 0.970463336, -0.168695927, -0.172460333, 0.141582936, -0.180552125, 0.973321974, -0.195333466, -0.968990743, -0.151334763)
+}
+
+-- Function to teleport the player
+local function teleportTo(spot)
+    game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(teleportSpots[spot])
+end
+
+Tab2:AddDropdown({
+    Name = "Teleport Locations",
+    Options = {"Altar", "Arch", "Birch", "Brine", "Deep" , "Deepshop", "Executive", "Keepers", "Mod_House" , "Moosewood", "Mushgrove", "Roslit", "Snow", "Snowcap" , "Spike", "Statue", "Sunstone", "Swamp" , "Terrapin" , "Trident" , "Vertigo" , "Volcano" , "Wilson" , "Wilsons_Rod"}; -- List of teleport locations
+    Callback = function(selectedLocation)
+        teleportTo(selectedLocation)  
+    end
+})
+
+
+
+local FishAreas = {
+    -- Oceanic Locations
+    Roslit_Bay = CFrame.new(-1663.73889, 149.234116, 495.498016, 0.0380855016, 4.08820178e-08, -0.999274492, 5.74658472e-08, 1, 4.3101906e-08, 0.999274492, -5.90657123e-08, 0.0380855016),
+    Ocean = CFrame.new(7665.104, 125.444443, 2601.59351, 0.999966085, -0.000609769544, -0.00821684115, 0.000612694537, 0.999999762, 0.000353460142, 0.00821662322, -0.000358482561, 0.999966204),
+    Snowcap_Pond = CFrame.new(2778.09009, 283.283783, 2580.323, 1, 7.17688531e-09, -2.22843701e-05, -7.17796267e-09, 1, -4.83369114e-08, 2.22843701e-05, 4.83370712e-08, 1),
+    Moosewood_Docks = CFrame.new(343.2359924316406, 133.61595153808594, 267.0580139160156),
+    Deep_Ocean = CFrame.new(3569.07153, 125.480949, 6697.12695, 0.999980748, -0.00188910461, -0.00591362361, 0.00193980196, 0.999961317, 0.00857902411, 0.00589718809, -0.00859032944, 0.9999457),
+    Vertigo = CFrame.new(-137.697098, -736.86377, 1233.15271, 1, -1.61821543e-08, -2.01375751e-05, 1.6184277e-08, 1, 1.05423091e-07, 2.01375751e-05, -1.0542341e-07, 1),
+    Snowcap_Ocean = CFrame.new(3088.66699, 131.534332, 2587.11304, 1, 4.30694858e-09, -1.19097813e-14, -4.30694858e-09, 1, -2.80603398e-08, 1.17889275e-14, 2.80603398e-08, 1),
+    Harvesters_Spike = CFrame.new(-1234.61523, 125.228767, 1748.57166, 0.999991536, -0.000663080777, -0.00405627443, 0.000725277001, 0.999881923, 0.0153511297, 0.00404561637, -0.0153539423, 0.999873936),
+    SunStone = CFrame.new(-845.903992, 133.172211, -1163.57776, 1, -7.93465915e-09, -2.09446498e-05, 7.93544608e-09, 1, 3.75741536e-08, 2.09446498e-05, -3.75743205e-08, 1),
+    Roslit_Bay_Ocean = CFrame.new(-1708.09302, 155.000015, 384.928009, 1, -4.53333427e-09, 4.06168125e-05, 4.53333427e-09, 1, -7.25907063e-08, -4.06168125e-05, 7.25907063e-08, 1),
+}
+
+-- Function to teleport the player
+local function teleportTo(spot)
+    game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(FishAreas[spot])
+end
+
+Tab2:AddDropdown({
+    Name = "Fish Areas",
+    Options = {" Roslit_Bay", "Ocean", "Snowcap_Pond", "Moosewood_Docks", "Deep_Ocean" , "Vertigo", "Snowcap_Ocean", "Harvesters_Spike", "SunStone", "Deep_Ocean" , "Roslit_Bay_Ocean"},  -- List of teleport locations
+    Callback = function(selectedLocation)
+        teleportTo(selectedLocation)  -- Teleport the player to the selected spot
+    end
+})
+
+
+
+local NpcPeople = {
+    Witch = CFrame.new(409.638092, 134.451523, 311.403687, -0.74079144, 0, 0.671735108, 0, 1, 0, -0.671735108, 0, -0.74079144),
+    Quiet_Synph = CFrame.new(566.263245, 152.000031, 353.872101, -0.753558397, 0, -0.657381535, 0, 1, 0, 0.657381535, 0, -0.753558397),
+    Pierre = CFrame.new(391.38855, 135.348389, 196.712387, -1, 0, 0, 0, 1, 0, 0, 0, -1),
+    Phineas = CFrame.new(469.912292, 150.69342, 277.954987, 0.886104584, -0, -0.46348536, 0, 1, -0, 0.46348536, 0, 0.886104584),
+    Paul = CFrame.new(381.741882, 136.500031, 341.891022, -1, 0, 0, 0, 1, 0, 0, 0, -1),
+    Shipwright = CFrame.new(357.972595, 133.615967, 258.154541, 0, 0, -1, 0, 1, 0, 1, 0, 0),
+    Angler = CFrame.new(480.102478, 150.501053, 302.226898, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+    Marc = CFrame.new(466.160034, 151.00206, 224.497086, -0.996853352, 0, -0.0792675018, 0, 1, 0, 0.0792675018, 0, -0.996853352),
+    Lucas = CFrame.new(449.33963, 181.999893, 180.689072, 0, 0, 1, 0, 1, -0, -1, 0, 0),
+    Latern_Keeper = CFrame.new(-39.0456772, -246.599976, 195.644363, -1, 0, 0, 0, 1, 0, 0, 0, -1),
+    Latern_Keeper2 = CFrame.new(-17.4230175, -304.970276, -14.529892, -1, 0, 0, 0, 1, 0, 0, 0, -1),
+    Inn_Keeper = CFrame.new(487.458466, 150.800034, 231.498932, -0.564704418, 0, -0.825293183, 0, 1, 0, 0.825293183, 0, -0.564704418),
+    Roslit_Keeper = CFrame.new(-1512.37891, 134.500031, 631.24353, 0.738236904, 0, -0.674541533, 0, 1, 0, 0.674541533, 0, 0.738236904),
+    FishingNpc_1 = CFrame.new(-1429.04138, 134.371552, 686.034424, 0, 0.0168599077, -0.999857903, 0, 0.999857903, 0.0168599077, 1, 0, 0),
+    FishingNpc_2 = CFrame.new(-1778.55408, 149.791779, 648.097107, 0.183140755, 0.0223737024, -0.982832015, 0, 0.999741018, 0.0227586292, 0.983086705, -0.00416803267, 0.183093324),
+    FishingNpc_3 = CFrame.new(-1778.26807, 147.83165, 653.258606, -0.129575253, 0.501478612, 0.855411887, -2.44146213e-05, 0.862683058, -0.505744994, -0.991569638, -0.0655529201, -0.111770131),
+    Henry = CFrame.new(483.539307, 152.383057, 236.296143, -0.789363742, 0, 0.613925934, 0, 1, 0, -0.613925934, 0, -0.789363742),
+    Daisy = CFrame.new(581.550049, 165.490753, 213.499969, -0.964885235, 0, -0.262671858, 0, 1, 0, 0.262671858, 0, -0.964885235),
+    Appraiser = CFrame.new(453.182373, 150.500031, 206.908783, 0, 0, 1, 0, 1, -0, -1, 0, 0),
+    Merchant = CFrame.new(416.690521, 130.302628, 342.765289, -0.249025017, -0.0326484665, 0.967946589, -0.0040341015, 0.999457955, 0.0326734781, -0.968488574, 0.00423171744, -0.249021754),
+    Mod_Keeper = CFrame.new(-39.0905838, -245.141144, 195.837891, -0.948549569, -0.0898146331, -0.303623199, -0.197293222, 0.91766715, 0.34490931, 0.247647122, 0.387066364, -0.888172567),
+    Ashe = CFrame.new(-1709.94055, 149.862411, 729.399536, -0.92290163, 0.0273250472, -0.384064913, 0, 0.997478604, 0.0709675401, 0.385035753, 0.0654960647, -0.920574605),
+    Alfredrickus = CFrame.new(-1520.60632, 142.923264, 764.522034, 0.301733732, 0.390740901, -0.869642735, 0.0273988936, 0.908225596, 0.417582989, 0.952998459, -0.149826124, 0.26333645),
+}
+
+
+-- Function to teleport the player
+local function teleportTo(spot)
+    game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(NpcPeople[spot])
+end
+
+Tab2:AddDropdown({
+    Name = "NPC Teleports",
+    Options = {" Witch", "Quiet_Synph", "Pierre", "Phineas", "Paul" , "Shipwright", "Angler", "Marc", "Lucas", "Latern_Keeper" , "Latern_Keeper2" , 
+               "Inn_Keeper", "Roslit_Keeper", "FishingNpc_1", "FishingNpc_2", "FishingNpc_3" , "Henry", "Daisy", "Appraiser", "Merchant", "Mod_Keeper" , "Ashe" , "Alfredrickus"},  -- List of teleport locations
+    Callback = function(selectedLocation)
+        teleportTo(selectedLocation)  -- Teleport the player to the selected spot
+    end
+})
+
+
+local itemSpots = {
+    Training_Rod = CFrame.new(457.693848, 148.357529, 230.414307, 1, -0, 0, 0, 0.975410998, 0.220393807, -0, -0.220393807, 0.975410998),
+    Plastic_Rod = CFrame.new(454.425385, 148.169739, 229.172424, 0.951755166, 0.0709736273, -0.298537821, -3.42726707e-07, 0.972884834, 0.231290117, 0.306858391, -0.220131472, 0.925948203),
+    Lucky_Rod = CFrame.new(446.085999, 148.253006, 222.160004, 0.974526405, -0.22305499, 0.0233404674, 0.196993902, 0.901088715, 0.386306256, -0.107199371, -0.371867687, 0.922075212),
+    Kings_Rod = CFrame.new(1375.57642, -810.201721, -303.509247, -0.7490201, 0.662445903, -0.0116144121, -0.0837960541, -0.0773290396, 0.993478119, 0.657227278, 0.745108068, 0.113431036),
+    Flimsy_Rod = CFrame.new(471.107697, 148.36171, 229.642441, 0.841614008, 0.0774728209, -0.534493923, 0.00678436086, 0.988063335, 0.153898612, 0.540036798, -0.13314943, 0.831042409),
+    Nocturnal_Rod = CFrame.new(-141.874237, -515.313538, 1139.04529, 0.161644459, -0.98684907, 1.87754631e-05, 1.87754631e-05, 2.21133232e-05, 1, -0.98684907, -0.161644459, 2.21133232e-05),
+    Fast_Rod = CFrame.new(447.183563, 148.225739, 220.187454, 0.981104493, 1.26492232e-05, 0.193478703, -0.0522461236, 0.962867677, 0.264870107, -0.186291039, -0.269973755, 0.944674432),
+    Carbon_Rod = CFrame.new(454.083618, 150.590073, 225.328827, 0.985374212, -0.170404434, 1.41561031e-07, 1.41561031e-07, 1.7285347e-06, 1, -0.170404434, -0.985374212, 1.7285347e-06),
+    Long_Rod = CFrame.new(485.695038, 171.656326, 145.746109, -0.630167365, -0.776459217, -5.33461571e-06, 5.33461571e-06, -1.12056732e-05, 1, -0.776459217, 0.630167365, 1.12056732e-05),
+    Mythical_Rod = CFrame.new(389.716705, 132.588821, 314.042847, 0, 1, 0, 0, 0, -1, -1, 0, 0),
+    Midas_Rod = CFrame.new(401.981659, 133.258316, 326.325745, 0.16456604, 0.986365497, 0.00103566051, 0.00017541647, 0.00102066994, -0.999999464, -0.986366034, 0.1645661, -5.00679016e-06),
+    Trident_Rod = CFrame.new(-1484.34192, -222.325562, -2194.77002, -0.466092706, -0.536795318, 0.703284025, -0.319611132, 0.843386114, 0.43191275, -0.824988723, -0.0234660208, -0.56466186),
+    Enchated_Altar = CFrame.new(1310.54651, -799.469604, -82.7303467, 0.999973059, 0, 0.00733732153, 0, 1, 0, -0.00733732153, 0, 0.999973059),
+    Bait_Crate = CFrame.new(384.57513427734375, 135.3519287109375, 337.5340270996094),
+    Quality_Bait_Crate = CFrame.new(-177.876, 144.472, 1932.844),
+    Crab_Cage = CFrame.new(474.803589, 149.664566, 229.49469, -0.721874595, 0, 0.692023814, 0, 1, 0, -0.692023814, 0, -0.721874595),
+    GPS = CFrame.new(517.896729, 149.217636, 284.856842, 7.39097595e-06, -0.719539165, -0.694451928, -1, -7.39097595e-06, -3.01003456e-06, -3.01003456e-06, 0.694451928, -0.719539165),
+    Basic_Diving_Gear = CFrame.new(369.174774, 132.508835, 248.705368, 0.228398502, -0.158300221, -0.96061182, 1.58026814e-05, 0.986692965, -0.162594408, 0.973567724, 0.037121132, 0.225361705),
+    Fish_Radar = CFrame.new(365.75177, 134.50499, 274.105804, 0.704499543, -0.111681774, -0.70086211, 1.32396817e-05, 0.987542748, -0.157350808, 0.709704578, 0.110844307, 0.695724905)
+}
+
+
+-- Function to teleport the player
+local function teleportTo(spot)
+    game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(itemSpots[spot])
+end
+
+Tab2:AddDropdown({
+    Name = "Item Spots",
+    Options = {"Training_Rod", "Plastic_Rod", "Lucky_Rod", "Kings_Rod", "Flimsy_Rod" , "Nocturnal_Rod", "Fast_Rod", "Carbon_Rod", "Long_Rod", "Mythical_Rod" , "Midas_Rod" , 
+               "Trident_Rod", "Enchated_Altar", "Bait_Crate", "Quality_Bait_Crate", "Crab_Cage" , "GPS", "Basic_Diving_Gear", "Fish_Radar"},  -- List of teleport locations
+    Callback = function(selectedLocation)
+        teleportTo(selectedLocation)  -- Teleport the player to the selected spot
+    end
+})
+
+
+local Tab3 = Window:MakeTab({
+    Name = "Misc",
+    PremiumOnly = false
+})
+
+-- Variables
+local WalkOnWaterEnabled = false
+local DefaultWalkSpeed = 16
+local DefaultJumpPower = 50
+local NoDrowningEnabled = false
+local GuiHidden = false
+local WaterParts = {}  -- Table to hold water parts
+local NoclipEnabled = false
+local LocalPlayer = game.Players.LocalPlayer
+
+
+-- Walk Speed Slider
+Tab3:AddSlider({
+    Name = "Walk Speed",
+    Min = 16,
+    Max = 300,
+    Default = DefaultWalkSpeed,
+    Increment = 1,
+    ValueName = "Speed",
+    Callback = function(Value)
+        LocalPlayer.Character.Humanoid.WalkSpeed = Value
+
+    end
+})
+
+-- Jump Height Slider
+Tab3:AddSlider({
+    Name = "Jump Height",
+    Min = 50,
+    Max = 500,
+    Default = DefaultJumpPower,
+    Increment = 1,
+    ValueName = "Height",
+    Callback = function(Value)
+        LocalPlayer.Character.Humanoid.JumpPower = Value
+    
+    end
+})
+
+
+
+
+
+Tab3:AddToggle({
+    Name = "Anti-Drown (Infinity Oxygen)",
+    Default = NoDrowningEnabled,
+    Callback = function(State)
+        NoDrowningEnabled = State
+        if NoDrowningEnabled then
+         
+            if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("client") then
+                local oxygen = LocalPlayer.Character.client:FindFirstChild("oxygen")
+                if oxygen then
+                    oxygen.Enabled = false
+                end
+            end
+            ShowNotification("Anti-Drown Enabled")
+        else
+ 
+            if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("client") then
+                local oxygen = LocalPlayer.Character.client:FindFirstChild("oxygen")
+                if oxygen then
+                    oxygen.Enabled = true
+                end
+            end
+            ShowNotification("Anti-Drown Disabled")
+        end
+    end
+})
+
+
