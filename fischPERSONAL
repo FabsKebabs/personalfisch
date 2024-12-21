@@ -229,7 +229,7 @@ end
 
 Tab2:AddDropdown({
     Name = "Teleport Locations",
-    Options = {"Altar", "Arch", "Birch", "Brine", "Deep", "Deepshop", "Executive", "Keepers", "Northern_Expedition", "North_Cave", "North_Vault", "Top_North_Camp", "Mod_House", "Moosewood", "Mushgrove", "Roslit", "Snow", "Snowcap", "Spike", "Statue", "Sunstone", "Swamp", "Terrapin", "Trident", "Vertigo", "The_Depths", "The_Depths_Rod", "Ancient_Isle", "Ancient_Waterfall", "Ancient_Archives", "Forsaken_Isle", "Volcano", "Wilson", "Wilsons_Rod"},
+    Options = {"Altar", "Arch", "Birch", "Brine", "Deep", "Deepshop", "Executive", "Keepers", "Northern_Expedition", "North_Cave", "North_Vault", "Top_North_Camp", "Mod_House", "Moosewood", "Mushgrove", "Roslit", "Snow", "Sundial_Totem", "Snowcap", "Spike", "Statue", "Sunstone", "Swamp", "Terrapin", "Trident", "Vertigo", "The_Depths", "The_Depths_Rod", "Ancient_Isle", "Ancient_Waterfall", "Ancient_Archives", "Forsaken_Isle", "Volcano", "Wilson", "Wilsons_Rod"},
     Callback = function(selectedLocation)
         teleportTo(selectedLocation)  
     end
